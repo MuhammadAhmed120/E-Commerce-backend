@@ -19,9 +19,10 @@ const loginSchema = Joi.object({
 router.post('/', async (req, res) => {
     try {
         await loginSchema.validateAsync(req.body)
+
         const { customerEmail } = req.body
         const loginUser = await UserModel.findOne({ customerEmail: customerEmail })
-        console.log('loginUser--->', loginUser)
+        // console.log('loginUser--->', loginUser)
         if (loginUser !== null) {
             const comparePassword = await bcrypt.compare(req.body.customerPassword, loginUser.customerPassword);
             if (comparePassword) {
@@ -29,7 +30,7 @@ router.post('/', async (req, res) => {
                     expiresIn: '15d'
                 })
                 const { customerPassword, ...userWithoutPassword } = loginUser.toObject();
-                return res.status(200).send({ status: 200, message: 'You are successfully login, happy shopping.', user: userWithoutPassword, token: loginToken })
+                return res.status(200).send({ status: 200, message: 'You are successfully logged in, happy shopping.', user: userWithoutPassword, token: loginToken })
             }
             return res.status(401).send({ status: 401, message: 'Password you entered is incorrect.' })
         } else {

@@ -12,7 +12,7 @@ app.use(express.json())
 app.use(cors())
 
 // DATABASE CONNECTION
-databaseConnection('Users')
+databaseConnection('Orders')
 
 const database = mongoose.connection;
 database.on("error", console.error.bind(console, "connection error:"));
