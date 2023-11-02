@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
+import connectDB from "../db/db.js"
 
 const { Schema } = mongoose
 
@@ -11,6 +12,8 @@ const userSchema = new Schema({
     timestamps: true
 })
 
-const UserModel = mongoose.model('users', userSchema)
+const { userDB, orderDB } = connectDB()
+
+const UserModel = userDB.model('users', userSchema)
 
 export default UserModel
