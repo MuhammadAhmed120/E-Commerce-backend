@@ -7,6 +7,7 @@ import UserModel from "../models/user.js";
 
 const router = express.Router()
 
+
 const loginSchema = Joi.object({
     customerEmail: Joi.string()
         .email({ tlds: { allow: false } })
@@ -22,7 +23,7 @@ router.post('/', async (req, res) => {
 
         const { customerEmail } = req.body
         const loginUser = await UserModel.findOne({ customerEmail: customerEmail })
-        // console.log('loginUser--->', loginUser)
+
         if (loginUser !== null) {
             const comparePassword = await bcrypt.compare(req.body.customerPassword, loginUser.customerPassword);
             if (comparePassword) {
@@ -36,10 +37,10 @@ router.post('/', async (req, res) => {
         } else {
             return res.status(404).send({ status: 404, message: 'Email address is not found.' })
         }
+
     } catch (error) {
         return res.status(300).send({ status: 300, message: 'An error has occured, please wait!', err: error.message })
     }
 })
-
 
 export default router
