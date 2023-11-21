@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import UserModel from "../models/user.js";
+import 'dotenv/config'
 
 const router = express.Router()
 
@@ -21,27 +22,24 @@ const registerSchema = Joi.object({
         .required()
         .pattern(/^(?=.*[a-zA-Z])(?=.*\d)/)
         .message('Password must include alphabets, and atleast one number.'),
-    repeatPassword: Joi.string()
-        .valid(Joi.ref('customerPassword'))
-        .required(),
     customerNumber: Joi.string()
         .pattern(/^[0-9]{10}$/)
-        .message('Phone number must be exactly 10 digits.')
-        .optional()
+        .message('Phone number must be exactly 11 digits.')
+        .required()
 });
 
 router.post('/', async (req, res) => {
     try {
         await registerSchema.validateAsync(req.body)
-        delete req.body.repeatPassword
         const hashPassword = await bcrypt.hash(req.body.customerPassword, 10)
         const registerUser = await UserModel.create({ ...req.body, customerPassword: hashPassword }).then(res => res.toObject())
-        const loginToken = jwt.sign({ customer_id: registerUser._id, customerEmail: registerUser.customerEmail }, 'store', {
+        const loginToken = jwt.sign({ customer_id: registerUser._id, customerEmail: registerUser.customerEmail }, process.env.JWT_SECRET, {
             expiresIn: '15d'
         })
         delete registerUser.customerPassword
         return res.status(200).send({ status: 200, message: 'You are successfully registered, happy shopping.', user: registerUser, token: loginToken })
     } catch (error) {
+        console.log(error)
         return res.status(300).send({ status: 300, message: 'An error has occured, please wait!', err: error.message })
     }
 })
