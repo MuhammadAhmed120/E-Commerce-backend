@@ -7,6 +7,7 @@ import Joi from "joi";
 import nodemailer from 'nodemailer';
 import transporter from "../mail/index.js";
 import parseJwt from "../token/tokenDecode.js";
+import verifyToken from "../token/verifyToken.js";
 
 const router = express.Router()
 
@@ -14,7 +15,10 @@ const orderValidationSchema = Joi.object({
   orderID: Joi.string().required(),
   user_id: Joi.string().required(),
   customerName: Joi.string().required(),
-  customerNumber: Joi.string().required().length(11),
+  customerNumber: Joi.string()
+    .pattern(/^[0-9]{11}$/)
+    .message('Phone number must be exactly 11 digits.')
+    .required(),
   customerEmail: Joi.string().email().required(),
   customerAddress: Joi.string().required(),
   customerZIPCode: Joi.string().required().length(5),
@@ -37,7 +41,7 @@ let generateOrderID = async () => {
   const randomID = uuidv4().substring(5, 8)
   const orderID = `${randomID}${randomChars}-${orderNumber}`;
 
-  const existingOrderID = await OrderModel.findOne({ orderID: orderID });
+  const existingOrderID = await OrderModel.findOne({ orderID });
 
   if (existingOrderID) {
     return await generateOrderID();
@@ -47,7 +51,7 @@ let generateOrderID = async () => {
 }
 
 
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   try {
     const orderID = await generateOrderID()
 
@@ -57,19 +61,27 @@ router.post("/", async (req, res) => {
     await orderValidationSchema.validateAsync({ orderID, user_id: userID.toString(), ...req.body });
 
     if (orderID && userID) {
-
-      const cartItems = req.body.cart
-      const itemList = [];
-      for (const itemName in cartItems) {
-        itemList.push(`${itemName}: ${cartItems[itemName]}`)
-      }
-
-      console.log('userID (1) -----> ', userID)
+      const orderItems = Object.values(req.body.cart).map(item => ({
+        name: item.name,
+        quantity: item.qty,
+        price: item.price,
+        size: item.size
+      }));
 
       const savingOrder = await OrderModel.create({ orderID, user_id: userID, ...req.body });
 
-      return res.status(200).send({ status: 200, orderStatus: `Thank you for your order ${req.body.customerName}, your order is placed and your order ID is '${orderID}'.` });
+      console.log(req.body)
+      
+      const orderDetails = {
+        customerName: req.body.customerName,
+        items: orderItems,
+        orderID,
+        status: 'Order Confirmed',
+        message: `Thank you, ${req.body.customerName}! Your order (${orderID}) has been placed successfully.`,
+        timestamp: new Date().toISOString(),
+      };
 
+      return res.status(200).send({ status: 200, orderDetails });
     } else {
       return res.status(404).send({ status: 404, error: 'Something went wrong.' })
     }
@@ -78,8 +90,7 @@ router.post("/", async (req, res) => {
   }
 })
 
-
-export default router
+export default router;
 
 // const mailDetails = {
 //   from: 'muhammadahmed120192@gmail.com',
