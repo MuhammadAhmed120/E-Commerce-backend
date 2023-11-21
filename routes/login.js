@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
 import mongoose from "mongoose";
 import UserModel from "../models/user.js";
+import 'dotenv/config'
 
 const router = express.Router()
 
@@ -27,7 +28,7 @@ router.post('/', async (req, res) => {
         if (loginUser !== null) {
             const comparePassword = await bcrypt.compare(req.body.customerPassword, loginUser.customerPassword);
             if (comparePassword) {
-                const loginToken = jwt.sign({ customer_id: loginUser._id, customerEmail: loginUser.customerEmail }, 'store', {
+                const loginToken = jwt.sign({ customer_id: loginUser._id, customerEmail: loginUser.customerEmail }, process.env.JWT_SECRET, {
                     expiresIn: '15d'
                 })
                 const { customerPassword, ...userWithoutPassword } = loginUser.toObject();
