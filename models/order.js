@@ -28,6 +28,6 @@ const orderSchema = new Schema({
 
 const { userDB, orderDB } = connectDB()
 
-const OrderModel = orderDB.model("Orders", orderSchema);
+const   OrderModel = orderDB.model("Orders", orderSchema);
 
 export default OrderModel;

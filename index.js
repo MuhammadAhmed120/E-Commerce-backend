@@ -2,10 +2,10 @@ import express from 'express'
 import router from './routes/index.js'
 import cors from 'cors'
 import mongoose from 'mongoose'
-import databaseConnection from './db/db.js'
 import chalk from 'chalk'
+import 'dotenv/config'
 
-const PORT = 3001
+const PORT = process.env.PORT || 3002
 
 // DATABASE CONNECTION
 
