@@ -4,7 +4,6 @@ import OrderModel from "../models/order.js";
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import Joi from "joi";
-import nodemailer from 'nodemailer';
 import transporter from "../mail/index.js";
 import parseJwt from "../token/tokenDecode.js";
 import verifyToken from "../token/verifyToken.js";
