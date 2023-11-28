@@ -10,6 +10,8 @@ const userSchema = new Schema({
     customerNumber: { type: String, required: true, unique: true },
     customerAddress: { type: String, required: false },
     customerPostal: { type: String, required: false },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 }, {
     timestamps: true
 })
