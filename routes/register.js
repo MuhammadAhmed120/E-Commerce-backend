@@ -31,12 +31,17 @@ const registerSchema = Joi.object({
 router.post('/', async (req, res) => {
     try {
         await registerSchema.validateAsync(req.body)
+
         const hashPassword = await bcrypt.hash(req.body.customerPassword, 10)
+
         const registerUser = await UserModel.create({ ...req.body, customerPassword: hashPassword }).then(res => res.toObject())
+
         const loginToken = jwt.sign({ customer_id: registerUser._id, customerEmail: registerUser.customerEmail }, process.env.JWT_SECRET, {
             expiresIn: '15d'
         })
+
         delete registerUser.customerPassword
+        
         return res.status(200).send({ status: 200, message: 'You are successfully registered, happy shopping.', user: registerUser, token: loginToken })
     } catch (error) {
         console.log(error)
