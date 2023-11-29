@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
         return res.status(200).send({ status: 200, message: 'You are successfully registered, happy shopping.', user: registerUser, token: loginToken })
     } catch (error) {
         console.log(error)
-        return res.status(300).send({ status: 300, message: 'An error has occured, please wait!', err: error.message })
+        return res.status(300).send({ status: 300, message: 'An error has occured, please wait!', errorMsg: error.message })
     }
 })
 
