@@ -26,10 +26,14 @@ const orderValidationSchema = Joi.object({
   cart: Joi.object().pattern(
     Joi.string(),
     Joi.object({
-      qty: Joi.number().required(),
       name: Joi.string().required(),
       price: Joi.number().required(),
-      size: Joi.string().required()
+      sizes: Joi.array().items(
+        Joi.object({
+          size: Joi.string().required(),
+          qty: Joi.number().required()
+        })
+      ).required()
     })
   )
 });
@@ -60,17 +64,36 @@ router.post("/", verifyToken, async (req, res) => {
     await orderValidationSchema.validateAsync({ orderID, user_id: userID.toString(), ...req.body });
 
     if (orderID && userID) {
-      const orderItems = Object.values(req.body.cart).map(item => ({
-        name: item.name,
-        quantity: item.qty,
-        price: item.price,
-        size: item.size
-      }));
+      // const orderItems = Object.values(req.body.cart).map(item => ({
+      //   name: item.name,
+      //   quantity: item.qty,
+      //   price: item.price,
+      //   size: item.size
+      // }));
+
+
+      const orderItems = [];
+
+      for (const clothID in req.body.cart) {
+        if (Object.prototype.hasOwnProperty.call(req.body.cart, clothID)) {
+          const item = req.body.cart[clothID];
+          const { name, price, sizes } = item;
+          sizes.forEach(sizeItem => {
+            orderItems.push({
+              name,
+              quantity: sizeItem.qty,
+              price,
+              size: sizeItem.size,
+              clothID // Adding clothID for reference
+            });
+          });
+        }
+      }
+
+      // console.log(orderItems)
 
       const savingOrder = await OrderModel.create({ orderID, user_id: userID, ...req.body });
 
-      console.log(req.body)
-      
       const orderDetails = {
         customerName: req.body.customerName,
         items: orderItems,

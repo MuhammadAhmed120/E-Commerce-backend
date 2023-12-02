@@ -16,10 +16,12 @@ const orderSchema = new Schema({
     cart: {
         type: Map,
         of: {
-            qty: { type: Schema.Types.Number, required: true },
             name: { type: Schema.Types.String, required: true },
             price: { type: Schema.Types.Number, required: true },
-            size: { type: Schema.Types.String, required: true },
+            sizes: [{
+                size: { type: Schema.Types.String, required: true },
+                qty: { type: Schema.Types.Number, required: true }
+            }]
         }
     }
 }, {
