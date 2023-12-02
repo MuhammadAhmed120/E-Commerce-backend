@@ -23,7 +23,8 @@
     "mongodb": "^6.1.0",
     "mongoose": "^7.6.2",
     "nodemailer": "^6.9.6",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "yarn": "^1.22.21"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
