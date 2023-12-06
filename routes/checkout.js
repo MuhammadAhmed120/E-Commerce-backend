@@ -12,7 +12,8 @@ const router = express.Router()
 
 const orderValidationSchema = Joi.object({
   orderID: Joi.string().required(),
-  user_id: Joi.string().required(),
+  user_id: Joi.string(),
+  customerMode: Joi.string().required(),
   customerName: Joi.string().required(),
   customerNumber: Joi.string()
     .pattern(/^[0-9]{11}$/)
@@ -58,20 +59,11 @@ router.post("/", verifyToken, async (req, res) => {
   try {
     const orderID = await generateOrderID()
 
-    const userToken = await parseJwt(req.headers.authorization)
-    const userID = new mongoose.Types.ObjectId(userToken.customer_id)
+    const { customerMode } = req
 
-    await orderValidationSchema.validateAsync({ orderID, user_id: userID.toString(), ...req.body });
+    await orderValidationSchema.validateAsync({ orderID, customerMode, ...req.body });
 
-    if (orderID && userID) {
-      // const orderItems = Object.values(req.body.cart).map(item => ({
-      //   name: item.name,
-      //   quantity: item.qty,
-      //   price: item.price,
-      //   size: item.size
-      // }));
-
-
+    if (orderID) {
       const orderItems = [];
 
       for (const clothID in req.body.cart) {
@@ -90,10 +82,6 @@ router.post("/", verifyToken, async (req, res) => {
         }
       }
 
-      // console.log(orderItems)
-
-      const savingOrder = await OrderModel.create({ orderID, user_id: userID, ...req.body });
-
       const orderDetails = {
         customerName: req.body.customerName,
         items: orderItems,
@@ -103,9 +91,30 @@ router.post("/", verifyToken, async (req, res) => {
         timestamp: new Date().toISOString(),
       };
 
-      return res.status(200).send({ status: 200, orderDetails });
-    } else {
-      return res.status(404).send({ status: 404, error: 'Something went wrong.' })
+
+      if (customerMode === 'user') {
+        const userToken = await parseJwt(req.headers.authorization)
+        const userID = userToken && new mongoose.Types.ObjectId(userToken.customer_id)
+
+        const savingOrder = await OrderModel.create({ orderID, customerMode, user_id: userID, ...req.body });
+
+        if (savingOrder) {
+          return res.status(200).send({ status: 200, orderDetails, savingOrder });
+        }
+      }
+      else if (customerMode === 'guest') {
+        const savingOrder = await OrderModel.create({ orderID, customerMode, ...req.body });
+        
+        if (savingOrder) {
+          return res.status(200).send({ status: 200, orderDetails, savingOrder });
+        }
+      }
+      else {
+        return res.status(404).send({ status: 404, error: 'Something went wrong.' })
+      }
+    }
+    else {
+      return res.status(404).send({ status: 404, error: 'Order ID didnot generate.' })
     }
   } catch (error) {
     return res.status(500).send({ status: 500, error: error.message })

@@ -6,6 +6,7 @@ const { Schema } = mongoose;
 const orderSchema = new Schema({
     orderID: { type: Schema.Types.String, required: true, unique: true },
     user_id: { type: Schema.Types.ObjectId, ref: 'Users' },
+    customerMode: { type: Schema.Types.String, required: true },
     customerName: { type: Schema.Types.String, required: true },
     customerNumber: { type: Schema.Types.String, required: true },
     customerEmail: { type: Schema.Types.String, required: true },
@@ -30,6 +31,6 @@ const orderSchema = new Schema({
 
 const { userDB, orderDB } = connectDB()
 
-const   OrderModel = orderDB.model("Orders", orderSchema);
+const OrderModel = orderDB.model("Orders", orderSchema);
 
 export default OrderModel;
