@@ -15,8 +15,6 @@ router.post("/", verifyToken, async (req, res) => {
         const userOrders = await OrderModel.find({ user_id: userID })
 
         if (userData && userID) {
-            console.log(userData)
-
             return res.status(200).send({ status: 200, userData, userOrders });
         } else {
             return res.status(404).send({ status: 404, error: 'User not found.' })
@@ -31,15 +29,11 @@ router.put("/", verifyToken, async (req, res) => {
         const { decodedToken, body } = req;
         const userID = new mongoose.Types.ObjectId(decodedToken.customer_id);
 
-        console.log(body)
-
         const updatedUser = await UserModel.findByIdAndUpdate(
             userID,
             body,
             { new: true }
         );
-
-        console.log(updatedUser)
 
         if (updatedUser) {
             return res.status(200).send({ status: 200, updatedUser, message: "Successfully updated." });
