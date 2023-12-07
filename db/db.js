@@ -4,14 +4,14 @@ import 'dotenv/config';
 const USER_URI = process.env.USER_URI_DB;
 const ORDER_URI = process.env.ORDER_URI_DB;
 
-const connectDB = async () => {
+const connectDB = () => {
     try {
-        const userDB = await mongoose.createConnection(USER_URI, {
+        const userDB = mongoose.createConnection(USER_URI, {
             useUnifiedTopology: true,
             useNewUrlParser: true
         });
 
-        const orderDB = await mongoose.createConnection(ORDER_URI, {
+        const orderDB = mongoose.createConnection(ORDER_URI, {
             useUnifiedTopology: true,
             useNewUrlParser: true
         });
