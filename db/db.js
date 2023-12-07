@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import 'dotenv/config'
 
-const USER_URI = `mongodb+srv://ahmed:${process.env.DATABASE_PASS}@cluster0.avy1rjl.mongodb.net/Users?retryWrites=true&w=majority`
-const ORDER_URI = `mongodb+srv://ahmed:${process.env.DATABASE_PASS}@cluster0.avy1rjl.mongodb.net/Orders?retryWrites=true&w=majority`
+const USER_URI = process.env.USER_URI_DB
+const ORDER_URI = process.env.ORDER_URI_DB
 
 const connectDB = () => {
     try {
