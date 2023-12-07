@@ -18,20 +18,20 @@ const userSchema = new Schema({
 
 
 
-// const { userDB, orderDB } = connectDB()
+const { userDB, orderDB } = connectDB()
 
-// const UserModel = userDB.model('users', userSchema)
+const UserModel = userDB.model('users', userSchema)
 
 
-let userDB;
-let orderDB;
+// let userDB;
+// let orderDB;
 
-(async () => {
-    const dbs = await connectDB();
-    userDB = dbs.userDB;
-    orderDB = dbs.orderDB;
-})();
+// (async () => {
+//     const dbs = await connectDB();
+//     userDB = dbs.userDB;
+//     orderDB = dbs.orderDB;
+// })();
 
-const UserModel = userDB.model('users', userSchema);
+// const UserModel = userDB.model('users', userSchema);
 
 export default UserModel
