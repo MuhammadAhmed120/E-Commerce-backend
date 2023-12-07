@@ -29,19 +29,19 @@ const orderSchema = new Schema({
     timestamps: true
 });
 
-// const { userDB, orderDB } = connectDB()
+const { userDB, orderDB } = connectDB()
 
-// const OrderModel = orderDB.model("Orders", orderSchema);
+const OrderModel = orderDB.model("Orders", orderSchema);
 
-let userDB;
-let orderDB;
+// let userDB;
+// let orderDB;
 
-(async () => {
-    const dbs = await connectDB();
-    userDB = dbs.userDB;
-    orderDB = dbs.orderDB;
-})();
+// (async () => {
+//     const dbs = await connectDB();
+//     userDB = dbs.userDB;
+//     orderDB = dbs.orderDB;
+// })();
 
-const OrderModel = orderDB.model('Orders', orderSchema);
+// const OrderModel = orderDB.model('Orders', orderSchema);
 
 export default OrderModel;
