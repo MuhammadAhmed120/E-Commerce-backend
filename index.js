@@ -34,7 +34,9 @@ app.use("/images", express.static('images'))
 app.use("/", router)
 
 userDB.once('open', function () {
+    console.log('Reached PORT -->', 'User DB connected!')
     orderDB.once('open', function () {
+        console.log('Reached PORT -->', 'Order DB connected!')
         try {
             app.listen(PORT, () => {
                 console.log(`Server running on ${PORT}.`);
