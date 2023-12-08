@@ -1,7 +1,6 @@
 import express from 'express'
 import router from './routes/index.js'
 import cors from 'cors'
-import mongoose from 'mongoose'
 import chalk from 'chalk'
 import connectDB from './db/db.js'
 import 'dotenv/config'
@@ -46,17 +45,3 @@ app.use(cors())
 
 app.use("/images", express.static('images'))
 app.use("/", router)
-
-// userDB.once('open', function () {
-//     console.log('Reached PORT -->', 'User DB connected!')
-//     orderDB.once('open', function () {
-//         console.log('Reached PORT -->', 'Order DB connected!')
-//         try {
-//             app.listen(PORT, () => {
-//                 console.log(`Server running on ${PORT}.`);
-//             });
-//         } catch (error) {
-//             console.error(`Error starting server: ${error}`);
-//         }
-//     });
-// });
