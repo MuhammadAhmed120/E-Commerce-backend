@@ -23,7 +23,7 @@ const registerSchema = Joi.object({
         .pattern(/^(?=.*[a-zA-Z])(?=.*\d)/)
         .message('Password must include alphabets, and atleast one number.'),
     customerNumber: Joi.string()
-        .pattern(/^[0-9]{10}$/)
+        .pattern(/^[0-9]{11}$/)
         .message('Phone number must be exactly 11 digits.')
         .required()
 });
