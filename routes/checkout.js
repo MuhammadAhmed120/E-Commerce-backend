@@ -133,7 +133,7 @@ router.post("/", verifyToken, async (req, res) => {
         items: orderItems,
         orderID,
         status: 'Order Confirmed',
-        message: `Thank you, <strong>${req.body.customerName}</strong>! Your order (${orderID}) has been placed successfully.`,
+        message: `Thank you, ${req.body.customerName}! Your order (${orderID}) has been placed successfully.`,
         timestamp: new Date().toISOString(),
       };
 
