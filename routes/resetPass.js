@@ -42,7 +42,14 @@ router.post('/forgot', async (req, res) => {
             from: 'muhammadahmed120192@gmail.com',
             to: customerEmail,
             subject: 'Reset your password',
-            text: `Click on the following link to reset your password: http://localhost:3000/reset-password/${token}`
+            html: `
+                <p>Dear User,</p>
+                <p>We received a request to reset your account password. To proceed with resetting your password, please click the link below:</p>
+                <a href="https://ahmport.vercel.app/reset-password/${token}">Reset Password</a>
+                <p>This link will expire in 10 minutes for security purposes. If you didnot request this change, you can safely ignore this email; your account remains secure.</p>
+                <p>If you have any questions or need further assistance, please don't hesitate to contact our support team.</p>
+                <p>Best regards,</p>
+            `
         };
 
         transporter.sendMail(mailOptions, (error, info) => {

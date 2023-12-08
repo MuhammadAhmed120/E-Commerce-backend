@@ -82,15 +82,60 @@ router.post("/", verifyToken, async (req, res) => {
         }
       }
 
+
+      const orderItemsList = orderItems.map(item => `
+  <li>
+    <strong>Item:</strong> ${item.name}<br>
+    <strong>Price:</strong> ${item.price}<br>
+    <strong>Quantity:</strong> ${item.quantity}<br>
+    <strong>Size:</strong> ${item.size}<br>
+    <strong>Cloth ID:</strong> ${item.clothID}
+  </li>
+`).join('');
+
+      const mailDetails = {
+        from: 'muhammadahmed120192@gmail.com',
+        to: req.body.customerEmail,
+        subject: 'Order Confirmation: Thank You for Shopping with Us!',
+        html: `
+          <html>
+          <body>
+            <div style="text-align: center;">
+              <h2>Dear ${req.body.customerName},</h2>
+            </div>
+            <p>Thank you for shopping with us at <b>FLEXUS</b>!</p>
+            <p>Your order has been confirmed, and here are the details:</p>
+            <p><strong>Order ID:</strong> ${orderID}</p>
+            <p><strong>Shipping Address:</strong> ${req.body.customerAddress}</p>
+            <p><strong>Order Summary:</strong></p>
+            <ul style="font-size: 16px;">
+              ${orderItemsList}
+            </ul>
+            <p style="font-size: 18px;"><strong>Total Amount: ${req.body.amount}</strong></p>
+            <p>Thank you for choosing us. We'll process your order as soon as possible, and you'll receive a notification when it's shipped.</p>
+            <p>If you have any questions or need further assistance, please don't hesitate to contact our customer support.</p>
+            <p>Happy shopping!</p>
+          </body>
+          </html>
+        `,
+      };
+
+      transporter.sendMail(mailDetails, (error, info) => {
+        if (error) {
+          console.log('Error: ' + error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+
       const orderDetails = {
         customerName: req.body.customerName,
         items: orderItems,
         orderID,
         status: 'Order Confirmed',
-        message: `Thank you, ${req.body.customerName}! Your order (${orderID}) has been placed successfully.`,
+        message: `Thank you, <strong>${req.body.customerName}</strong>! Your order (${orderID}) has been placed successfully.`,
         timestamp: new Date().toISOString(),
       };
-
 
       if (customerMode === 'user') {
         const userToken = await parseJwt(req.headers.authorization)
@@ -104,7 +149,7 @@ router.post("/", verifyToken, async (req, res) => {
       }
       else if (customerMode === 'guest') {
         const savingOrder = await OrderModel.create({ orderID, customerMode, ...req.body });
-        
+
         if (savingOrder) {
           return res.status(200).send({ status: 200, orderDetails, savingOrder });
         }
@@ -122,42 +167,6 @@ router.post("/", verifyToken, async (req, res) => {
 })
 
 export default router;
-
-// const mailDetails = {
-//   from: 'muhammadahmed120192@gmail.com',
-//   to: req.body.customerEmail,
-//   subject: 'Order Confirmation: Thank You for Shopping with Us!',
-//   html: `
-//     <html>
-//     <body>
-//       <div style="text-align: center;">
-//         <h2>Dear ${req.body.customerName},</h2>
-//       </div>
-//       <p>Thank you for shopping with us at <b>FLEXUS</b>!</p>
-//       <p>Your order has been confirmed, and here are the details:</p>
-//       <p><strong>Order ID:</strong> ${orderID}</p>
-//       <p><strong>Shipping Address:</strong> ${req.body.customerAddress}</p>
-//       <p><strong>Order Summary:</strong></p>
-//       <ul style="font-size: 16px;">
-//         ${itemList.map(item => `<li>${item}</li>`).join('')}
-//       </ul>
-//       <p style="font-size: 18px;"><strong>Total Amount: ${req.body.amount}</strong></p>
-//       <p>Thank you for choosing us. We'll process your order as soon as possible, and you'll receive a notification when it's shipped.</p>
-//       <p>If you have any questions or need further assistance, please don't hesitate to contact our customer support.</p>
-//       <p>Happy shopping!</p>
-//     </body>
-//     </html>
-//   `,
-// };
-
-// transporter.sendMail(mailDetails, (error, info) => {
-//   if (error) {
-//     console.log('Error: ' + error);
-//   } else {
-//     console.log('Email sent: ' + info.response);
-//   }
-// });
-
 
 // const randomNumber = Math.floor(Math.random() * 3) + 2;
 // console.log(randomNumber)
