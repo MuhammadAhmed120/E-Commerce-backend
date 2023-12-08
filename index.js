@@ -35,8 +35,12 @@ app.use("/", router)
 
 userDB.once('open', function () {
     orderDB.once('open', function () {
-        app.listen(PORT, () => {
-            console.log(`Server running on ${PORT}.`);
-        });
+        try {
+            app.listen(PORT, () => {
+                console.log(`Server running on ${PORT}.`);
+            });
+        } catch (error) {
+            console.error(`Error starting server: ${error}`);
+        }
     });
 });
