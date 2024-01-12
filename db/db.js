@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import 'dotenv/config';
 
-
 const USER_URI = process.env.USER_URI_DB;
 const ORDER_URI = process.env.ORDER_URI_DB;
 
