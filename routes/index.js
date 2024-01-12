@@ -10,11 +10,11 @@ import forgotPass from "./resetPass.js";
 const router = express.Router()
 
 router.use('/', register)
-router.use('/tokenverification', token)
 router.use('/password', forgotPass)
 router.use('/login', login)
 router.use('/home', cloth)
 router.use('/home/user', user)
 router.use('/home/checkout', checkout)
+router.use('/tokenverification', token)
 
 export default router;
