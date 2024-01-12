@@ -18,6 +18,14 @@ const loginSchema = Joi.object({
         .required()
 });
 
+const generateToken = (userData) => {
+    return jwt.sign(
+        { customer_id: userData._id, customerEmail: userData.customerEmail },
+        process.env.JWT_SECRET,
+        { expiresIn: '15d' }
+    );
+};
+
 router.post('/', async (req, res) => {
     try {
         await loginSchema.validateAsync(req.body)
